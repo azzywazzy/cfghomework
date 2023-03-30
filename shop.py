@@ -90,7 +90,7 @@ def purchase_unsuccessful():
     print("Sorry your purchase wasn't successful. Please try again later.")
 
 
-def toomany_attempts(attempts):
+def too_many_attempts(attempts):
     if attempts == 3:
         raise TooManyAttempts
     else:
@@ -104,7 +104,6 @@ def customer_leaving():
 def main():
     attempts = 0
     customer_funds = get_budget()
-    customer_status = "leaving"
 
     try:
         get_budget()
@@ -126,7 +125,7 @@ def main():
             else:
                 attempts = increment_attempts(attempts)
 
-            if toomany_attempts(attempts):
+            if too_many_attempts(attempts):
                 customer_status = "leaving"
                 continue
 

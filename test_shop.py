@@ -1,5 +1,5 @@
 # import needed libraries
-from unittest import TestCase, main, mock
+from unittest import TestCase, mock
 from shop import *
 
 
@@ -43,11 +43,11 @@ class TestGetPrice(TestCase):
         self.assertEqual(15, result)
 
 
-# unit tests for toomany_attempts functionx
+# unit tests for too many_attempts function
 class TestTooMany(TestCase):
     def test_too_many(self):
         with self.assertRaises(TooManyAttempts):
-            toomany_attempts(3)
+            too_many_attempts(3)
 
 
 if __name__ == "__main__":
