@@ -1,40 +1,69 @@
+# defining functions and classes
 
 class TooManyAttempts(ValueError):
     """Raised when 3 or more attempts have been made"""
     pass
 
+
+def get_input(message):
+    return input(message)
+
+
+def show_items():
+    return {
+        "Console": 200,
+        "Games": 70,
+        "Controller": 50,
+        "Carry Case": 15
+    }
+
+
+def get_budget():
+    budget = 100
+    return budget
+
+
+def welcome_customer():
+    print("Welcome to the shop!")
+
+
 def item_choice():
-    choice = input("What would you like to buy? Or type 'x' to exit:  ")
+    choice = get_input("What would you like to buy? Choose from the items above or type 'x' to exit:  ")
     return choice
 
 
 def validate_choice(choice):
     if choice in "xX":
-        global customer_left
-        customer_left = True
-        return
-    if choice in items:
-        return choice
+        return "leaving"
+    if choice in show_items():
+        return "shopping"
     else:
         raise ValueError("Please choose one of the available items, or 'x' to exit")
 
 
-def check_budget(budget, price):
-    if price <= budget:
+def get_price(choice):
+    return show_items()[choice]
+
+
+def can_afford(choice, budget):
+    if show_items()[choice] <= budget:
         return True
     else:
         return False
 
 
-def attempt_purchase(can_afford,attempts):
-    if can_afford:
+def attempt_purchase(choice, budget):
+    if can_afford(choice, budget):
         print("Here's your {}!".format(choice))
-        global customer_left
-        customer_left = True
+        return True
     else:
-        attempts += 1
-        print("You cannot afford this.")
-        return attempts
+        print("You cannot afford this")
+        return False
+
+
+def increment_attempts(attempts):
+    attempts += 1
+    return attempts
 
 
 def continue_shopping():
@@ -44,11 +73,9 @@ def continue_shopping():
 
 def validate_continue(carry_on):
     if carry_on in "xX":
-        global customer_left
-        customer_left = True
-        return
-    if carry_on in "yY":
-        return
+        return "leaving"
+    elif carry_on in "yY":
+        return "shopping"
     else:
         raise ValueError("Please choose 'y' to top up your balance, or 'x' to exit")
 
@@ -59,6 +86,10 @@ def add_funds(balance):
     return new_balance
 
 
+def purchase_unsuccessful():
+    print("Sorry your purchase wasn't successful. Please try again later.")
+
+
 def toomany_attempts(attempts):
     if attempts == 3:
         raise TooManyAttempts
@@ -66,46 +97,50 @@ def toomany_attempts(attempts):
         return
 
 
-items = {
-    "Console": 200,
-    "Games": 70,
-    "Controller": 50,
-    "Carry Case": 15
-}
+def customer_leaving():
+    print("Thank you for shopping with us. Please come again soon.")
 
-customer_funds = 100
-customer_left = False
-attempts = 0
 
-try:
-    print("Welcome to the shop. Browse our items, or press 'x' to exit.")
-    print(items)
+def main():
+    attempts = 0
+    customer_funds = get_budget()
+    customer_status = "leaving"
 
-    choice = item_choice()
-    validate_choice(choice)
+    try:
+        get_budget()
+        welcome_customer()
+        print(show_items())
+        choice = item_choice()
+        customer_status = validate_choice(choice)
 
-except ValueError as exc:
-    print("Invalid input: %s" %exc)
+    except ValueError as exc:
+        print("Invalid input: %s" % exc)
 
-else:
-    while not customer_left:
-
-        attempts = attempt_purchase(check_budget(customer_funds, items[choice]), attempts)
-        toomany_attempts(attempts)
-
-        if customer_left:
-            continue
-
-        carry_on = continue_shopping()
-        validate_continue(carry_on)
-
-        if customer_left:
-            continue
-
-        customer_funds = add_funds(customer_funds)
-
-finally:
-    if customer_left:
-        print("Thank you for shopping with us. Please come again soon.")
     else:
-        print("Sorry your purchase wasn't successful. Please try again later.")
+        while customer_status != "leaving":
+
+            if attempt_purchase(choice, customer_funds):
+                customer_status = "leaving"
+                continue
+
+            else:
+                attempts = increment_attempts(attempts)
+
+            if toomany_attempts(attempts):
+                customer_status = "leaving"
+                continue
+
+            carry_on = continue_shopping()
+            customer_status = validate_continue(carry_on)
+
+            if customer_status == "leaving":
+                continue
+
+            customer_funds = add_funds(customer_funds)
+
+    finally:
+        customer_leaving()
+
+
+if __name__ == "__main__":
+    main()
