@@ -9,6 +9,10 @@ class TestItemChoice(TestCase):
     def test_item_choice(self):
         self.assertEqual("Console", item_choice())
 
+    @mock.patch("shop.get_input", lambda _: "Carry Case")
+    def test_item_choice_error(self):
+        self.assertEqual("Carry Case", item_choice())
+
 
 # unit tests for validate_choice function
 class TestValidateChoice(TestCase):
@@ -32,7 +36,7 @@ class TestCanAfford(TestCase):
         self.assertTrue(result)
 
     def test_budget_not_enough(self):
-        result = can_afford("Games", 50)
+        result = can_afford("Console", 100)
         self.assertFalse(result)
 
 
@@ -41,6 +45,10 @@ class TestGetPrice(TestCase):
     def test_get_price(self):
         result = get_price("Carry Case")
         self.assertEqual(15, result)
+
+    def test_get_price_2(self):
+        result = get_price("Console")
+        self.assertEqual(200, result)
 
 
 # unit tests for too many_attempts function
