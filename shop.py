@@ -17,6 +17,9 @@ def show_items():
         "Carry Case": 15
     }
 
+def print_items():
+    for key in show_items():
+        print(key, " : £", show_items()[key])
 
 def get_budget():
     budget = 100
@@ -108,7 +111,7 @@ def main():
     try:
         get_budget()
         welcome_customer()
-        print(show_items())
+        print_items()
         choice = item_choice()
         customer_status = validate_choice(choice)
 
